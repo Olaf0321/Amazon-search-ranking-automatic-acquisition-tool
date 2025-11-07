@@ -1,0 +1,11 @@
+venv
+.playwright-browsers
+.env
+*.csv
+weighty-vertex-464012-u4-7cd9bab1166b.json
+dist
+build
+*.spec
+deploy
+*.bat
+*.rar
