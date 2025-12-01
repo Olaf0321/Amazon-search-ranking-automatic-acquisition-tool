@@ -353,7 +353,7 @@ class AmazonRankingApp(tk.Tk):
             service = self.get_google_sheets_service()
             
             # 現在の日付を取得
-            current_date = datetime.now().strftime("%m/%d")
+            current_date = datetime.now().strftime("%Y/%m/%d")
             
             # キーワードを読み込み
             keywords = self.load_keywords()
