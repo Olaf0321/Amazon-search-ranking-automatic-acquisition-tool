@@ -438,6 +438,8 @@ class AmazonRankingApp(tk.Tk):
             # 現在のヘッダーをチェック
             if len(values) >= 2:
                 current_header1 = values[0][:total_columns] if len(values[0]) >= total_columns else values[0]
+                if len(current_header1) < total_columns:
+                    current_header1 += [""] * (total_columns - len(current_header1))
                 current_header2 = values[1][:total_columns] if len(values[1]) >= total_columns else values[1]
                 
                 # ヘッダーが一致するかチェック

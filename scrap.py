@@ -60,6 +60,7 @@ async def scraping(spreadsheet_id=None, sheet_name=None):
             viewport={"width": 1600, "height": 1000}
         )
         page = await context.new_page()
+        await page.goto(target_url)
 
         result = []  # [{"keyword": "自然検索", "SP": "", "SB": ""}, ...]
 
@@ -68,10 +69,23 @@ async def scraping(spreadsheet_id=None, sheet_name=None):
             sponsored_products_info = []  # [{"asin": "", "page": ""}, ...]
             sb_products_info = [] # [{"asins": ["", ""], "page": number}, ...]
             for page_index in range(1, 3):  # Scrape first 2 pages for each keyword
-                
-                # Go to target URL page
-                page_url = f"{target_url}s?k={keyword}&page={page_index}"
-                await page.goto(page_url)
+                if page_index == 1:
+                    # Input keyword in search box (find input element that placeholder is "Amazon.co.jpを検索")
+                    search_input = page.locator('input[placeholder="Amazon.co.jpを検索"]')
+                    await search_input.fill(keyword)
+
+                    # Click enter
+                    await search_input.press("Enter")
+
+                # If page_index > 1, navigate to the specific page(find a element that aria-label is "2ページに移動)
+                if page_index > 1:
+                    page_navigator = page.locator(f'a[aria-label="{page_index}ページに移動"]')
+                    if await page_navigator.count() == 0:
+                        print(f"ページ {page_index} が見つかりません。次のキーワードに進みます。")
+                        break
+                    await page_navigator.click()
+
+                await asyncio.sleep(5)  # wait for page load
 
                 # Get product elements (role is "listitem" and each product must have data-asin attribute in it)
                 product_elements = await page.locator('[role="listitem"][data-asin]').all()
